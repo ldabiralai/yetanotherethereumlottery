@@ -5,6 +5,7 @@ import 'zeppelin-solidity/contracts/ownership/Ownable.sol';
 contract Lottery is Ownable {
   uint public stakeAmount = 0.001 ether;
   uint public playerCount = 5;
+  address[] public tickets;
 
   function setStakeAmount(uint newStakeAmount) external onlyOwner {
     stakeAmount = newStakeAmount;
@@ -12,5 +13,14 @@ contract Lottery is Ownable {
 
   function setPlayerCount(uint newPlayerCount) external onlyOwner {
     playerCount = newPlayerCount;
+  }
+
+  function getTickets() public view returns (address[]) {
+    return tickets;
+  }
+
+  function buyTicket() external payable {
+    require(msg.value == stakeAmount);
+    tickets.push(msg.sender);
   }
 }
