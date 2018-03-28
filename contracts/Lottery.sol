@@ -19,7 +19,7 @@ contract Lottery is Ownable {
     return tickets;
   }
 
-  function buyTicket() external payable {
+  function() external payable {
     require(msg.value == stakeAmount);
     tickets.push(msg.sender);
   }

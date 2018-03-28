@@ -55,7 +55,7 @@ contract('Lottery', ([owner, ...otherAccounts]) => {
     })
   })
 
-  contract('buyTicket', () => {
+  contract('fallback function (when ether is sent directly to contract)', () => {
     const buyer = otherAccounts[0];
 
     it('should start with no tickets', async () => {
@@ -66,7 +66,7 @@ contract('Lottery', ([owner, ...otherAccounts]) => {
       const amount = global.web3.toWei(0.0001, 'ether');
 
       try {
-        await lottery.buyTicket({from: buyer, value: amount});
+        await lottery.sendTransaction({from: buyer, value: amount});
       } catch (e) {
         assert.deepEqual(await lottery.getTickets(), []);
       }
@@ -75,7 +75,7 @@ contract('Lottery', ([owner, ...otherAccounts]) => {
     it('should be able to buy a ticket for the exact amount', async () => {
       const amount = global.web3.toWei(0.001, 'ether');
 
-      await lottery.buyTicket({from: buyer, value: amount});
+      await lottery.sendTransaction({from: buyer, value: amount});
 
       assert.deepEqual(await lottery.getTickets(), [buyer]);
     })
@@ -84,7 +84,7 @@ contract('Lottery', ([owner, ...otherAccounts]) => {
       const amount = global.web3.toWei(0.01, 'ether');
 
       try {
-        await lottery.buyTicket({from: buyer, value: amount});
+        await lottery.sendTransaction({from: buyer, value: amount});
       } catch (e) {
         assert.deepEqual(await lottery.getTickets(), []);
       }
