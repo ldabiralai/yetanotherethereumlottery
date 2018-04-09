@@ -89,6 +89,23 @@ contract('Lottery', ([owner, ...otherAccounts]) => {
         assert.deepEqual(await lottery.getTickets(), []);
       }
     })
+
+    it.only('should send 4/5th of stakeAmount ether to an address once the playerCount is met', async () => {
+      const playerCount = await lottery.playerCount();
+      const stakeAmount = await lottery.stakeAmount();
+
+      await Promise.all(Array(playerCount - 1).fill().map((_, index) =>
+        lottery.sendTransaction({from: otherAccounts[index], value: stakeAmount})
+      ));
+
+      assert.deepEqual(global.web3.eth.getBalance(lottery.address).toString(), global.web3.toWei(0.004, 'ether'));
+
+      const ownerBalanceBeforeTransaction = global.web3.eth.getBalance(owner);
+      await lottery.sendTransaction({from: otherAccounts[playerCount], value: stakeAmount});
+
+      const ownerBalanceAfterTransaction = global.web3.eth.getBalance(owner);
+      assert.deepEqual(`${ownerBalanceAfterTransaction - ownerBalanceBeforeTransaction}`, global.web3.toWei(0.005, 'ether'));
+    })
   })
 
 })

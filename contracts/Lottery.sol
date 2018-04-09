@@ -22,5 +22,9 @@ contract Lottery is Ownable {
   function() external payable {
     require(msg.value == stakeAmount);
     tickets.push(msg.sender);
+    if (tickets.length == playerCount) {
+      owner.transfer(this.balance);
+      delete tickets;
+    }
   }
 }
